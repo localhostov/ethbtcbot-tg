@@ -1,5 +1,7 @@
-val ktor_version: String by project
-val kotlin_version: String by project
+val ktorVersion: String by project
+val kotlinVersion: String by project
+val retrofitVersion: String by project
+val tgbotVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.9.10"
@@ -24,11 +26,11 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-client-core:$ktor_version")
-    implementation("io.ktor:ktor-client-cio:$ktor_version")
-    implementation("io.ktor:ktor-serialization-gson:$ktor_version")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.1.0")
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-gson:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:$tgbotVersion")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 }
