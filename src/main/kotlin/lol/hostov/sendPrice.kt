@@ -42,8 +42,8 @@ suspend fun sendPrice(bot: Bot, client: HttpClient) {
         latestPrices = data
 
         println(data)
-//        delay(30000)
-//        sendPrice(bot, client)
+        delay(30000)
+        sendPrice(bot, client)
     } else {
         bot.sendMessage(
             chatId = ChatId.fromId(Constants.OWNER_TG_ID),
