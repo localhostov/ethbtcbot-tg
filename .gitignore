@@ -34,3 +34,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# custom
+/src/main/kotlin/lol/hostov/Constants.kt
+/assets/Output.png
