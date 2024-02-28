@@ -28,7 +28,7 @@ suspend fun main() {
         }
     }
 
-    sendPrice(bot, client)
     bot.startPolling()
+    sendPrice(bot, client)
 }
 
