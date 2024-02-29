@@ -14,43 +14,49 @@ import java.io.File
 import java.text.DecimalFormat
 
 suspend fun sendPrice(bot: Bot, client: HttpClient) {
-    val response = client.get(Constants.COINSTATS_API_URL) {
-        headers {
-            set("X-API-KEY", Constants.COINSTATS_API_KEY)
+    try {
+        val response = client.get(Constants.COINSTATS_API_URL)
+
+        if (response.status == HttpStatusCode.OK) {
+            val data:  CoinstatsResponse = response.body()
+            val text = data.result.joinToString("\n") { coin ->
+                val price = DecimalFormat("#,###").format(coin.price)
+
+                "${coin.symbol} – $$price"
+            }
+
+            generateImage(
+                data.result.find { it.symbol == "ETH" }!! to
+                        data.result.find { it.symbol == "BTC" }!!
+            )
+            val message = bot.sendPhoto(
+                chatId = ChatId.fromId(Constants.TG_CHAT_ID),
+                photo = TelegramFile.ByFile(File("./assets/Output.png")),
+                caption = text
+            )
+
+            latestImageFileId = message.first?.body()?.result?.photo?.last()?.fileId
+            latestPrices = data
+
+            println(data)
+            delay(30_000)
+            sendPrice(bot, client)
+        } else {
+            bot.sendMessage(
+                chatId = ChatId.fromId(Constants.OWNER_TG_ID),
+                text = "Some error while getting coin stats:\n\n${response.body<String>()}"
+            )
+
+            delay(60_000)
+            sendPrice(bot, client)
         }
-    }
-
-    if (response.status == HttpStatusCode.OK) {
-        val data:  CoinstatsResponse = response.body()
-        val text = data.result.joinToString("\n") { coin ->
-            val price = DecimalFormat("#,###").format(coin.price)
-
-            "${coin.symbol} – $$price"
-        }
-
-        generateImage(
-            data.result.find { it.symbol == "ETH" }!! to
-                    data.result.find { it.symbol == "BTC" }!!
-        )
-        val message = bot.sendPhoto(
-            chatId = ChatId.fromId(Constants.TG_CHAT_ID),
-            photo = TelegramFile.ByFile(File("./assets/Output.png")),
-            caption = text
-        )
-
-        latestImageFileId = message.first?.body()?.result?.photo?.last()?.fileId
-        latestPrices = data
-
-        println(data)
-        delay(30000)
-        sendPrice(bot, client)
-    } else {
+    } catch (e: Throwable) {
         bot.sendMessage(
             chatId = ChatId.fromId(Constants.OWNER_TG_ID),
-            text = "Some error while getting coin stats:\n\n${response.body<String>()}"
+            text = "Some exception in sendPrice fun:\n\n${e.message}"
         )
 
-        delay(60000)
+        delay(180_000)
         sendPrice(bot, client)
     }
 }
